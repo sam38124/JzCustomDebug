@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto" android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp" android:id="@+id/toolbar" android:background="@android:color/holo_red_dark">
+
+        <TextView
+                android:text="所有崩潰事件"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView5" android:layout_centerInParent="true"
+                android:textColor="@android:color/white" android:textSize="20sp" android:textStyle="bold"/>
+        <ImageView
+                android:layout_width="50dp"
+                android:layout_height="match_parent" app:srcCompat="@mipmap/exit" android:id="@+id/exit"
+                android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_below="@id/toolbar" android:id="@+id/re"/>
+    <TextView
+            android:text="查無崩潰紀錄"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:id="@+id/no" android:gravity="center"
+            android:textSize="20sp"/>
+</RelativeLayout>

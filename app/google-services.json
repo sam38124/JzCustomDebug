@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "322567574415",
+    "firebase_url": "https://jzdebughelper.firebaseio.com",
+    "project_id": "jzdebughelper",
+    "storage_bucket": "jzdebughelper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322567574415:android:91abfa1804a94a8efb31fa",
+        "android_client_info": {
+          "package_name": "com.jianzhi.jzcustomdebug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322567574415-7c5gn6to5u9jhg8504hi3k9jhkosub88.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZWYxOiyNhoVcEQZAneLHAj9pH1FFDKSw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322567574415-7c5gn6to5u9jhg8504hi3k9jhkosub88.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
