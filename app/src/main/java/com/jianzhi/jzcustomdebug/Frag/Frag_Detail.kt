@@ -3,14 +3,15 @@ package com.jianzhi.jzcustomdebug.Frag
 import com.jianzhi.jzcustomdebug.R
 import com.jzsql.lib.mmySql.ItemDAO
 import com.jzsql.lib.mmySql.Sql_Result
-import com.orange.jzchi.jzframework.RootFragement
+import com.orange.jzchi.jzframework.JzActivity
+import com.orange.jzchi.jzframework.JzFragement
 import kotlinx.android.synthetic.main.error_detail.view.*
 
-class Frag_Detail(val id:String):RootFragement(R.layout.error_detail){
+class Frag_Detail(val id:String,var bundle:String):JzFragement(R.layout.error_detail){
 
-    override fun ViewInit() {
+    override fun viewInit() {
         val item = ItemDAO(act, "debug.db").create()
-        item.Query("select * from `${rootshare.GetPro("package", "nodata")}` where id='$id'", Sql_Result {
+        item.query("select * from `${bundle}` where id='$id'", Sql_Result {
             val result=it.getString(2)
             val make=it.getString(1)
             val time=it.getString(3)
@@ -20,7 +21,7 @@ class Frag_Detail(val id:String):RootFragement(R.layout.error_detail){
                 rootview.make.text=make
             }
         })
-        rootview.back.setOnClickListener {act.GoBack()
+        rootview.back.setOnClickListener {JzActivity.getControlInstance().goBack()
         }
     }
 

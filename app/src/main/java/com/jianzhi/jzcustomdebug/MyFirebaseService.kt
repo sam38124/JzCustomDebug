@@ -1,29 +1,43 @@
 package com.jianzhi.jzcustomdebug
 
-
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Handler
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.jianzhi.jzcustomdebug.event.MessageEvent
 import com.jzsql.lib.mmySql.ItemDAO
+import org.greenrobot.eventbus.EventBus
+
 
 class MyFirebaseService : FirebaseMessagingService() {
     val handler=Handler()
+val channelid="com.jianzhi.jzcustomdebug"
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+        AddAdvice("發生崩潰","saas",this)
         handler.post {
+            Log.e("type",remoteMessage.from)
             var data=remoteMessage.data["data"]
             var type=remoteMessage.data["type"]
             var time=remoteMessage.data["time"]
-            var dbname=this.applicationContext.getSharedPreferences("Setting", Context.MODE_PRIVATE).getString("package","nodata")
-
-            Log.i("MyFirebaseService", "收到")
+            var dbname=remoteMessage.from.toString().replace("/topics/","")
+            Log.i("MyFirebaseService", "收到"+dbname)
             Log.i("MyFirebaseService", "data " + data)
             Log.i("MyFirebaseService", "type " + type)
             Log.i("MyFirebaseService", "time " + time)
             val item = ItemDAO(this.applicationContext, "debug.db").create()
-            item.ExSql(
+            item.exsql(
                 "CREATE TABLE IF NOT EXISTS `$dbname` (\n" +
                         "    id   INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                         "    type VARCHAR NOT NULL,\n" +
@@ -31,10 +45,12 @@ class MyFirebaseService : FirebaseMessagingService() {
                         "    time VARCHAR NOT NULL\n" +
                         ");\n"
             )
-            item.ExSql("insert into `$dbname` (type,data,time) values ('${type}','${remoteMessage.data["data"]}','${remoteMessage.data["time"]}')")
+            item.exsql("insert into `$dbname` (type,data,time) values ('${type}','${remoteMessage.data["data"]}','${remoteMessage.data["time"]}')")
             item.close()
             Log.i("comple","complete")
+            EventBus.getDefault().post(MessageEvent())
         }
+
 
     }
 
@@ -47,5 +63,36 @@ class MyFirebaseService : FirebaseMessagingService() {
         super.onNewToken(s)
         Log.i("MyFirebaseService", "token " + s!!)
     }
-
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.app_app_name)
+            val descriptionText = getString(R.string.error)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelid, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+    fun AddAdvice(title:String,content:String,context:Context){
+        createNotificationChannel()
+        var builder = NotificationCompat.Builder(this, channelid)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("My notification")
+            .setContentText("Much longer text that cannot fit one line...")
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText("Much longer text that cannot fit one line..."))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
+            .setVibrate()
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(10, builder.build())
+        }
+    }
 }

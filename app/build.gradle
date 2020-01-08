@@ -31,8 +31,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-    implementation 'com.github.sam38124:JzFrameWork:v4.0'
+    implementation 'com.github.sam38124:JzFrameWork:v5.5'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
-    implementation 'com.github.sam38124:JzSqlHelper:5.1'
+    implementation 'com.github.sam38124:JzSqlHelper:5.4'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }
