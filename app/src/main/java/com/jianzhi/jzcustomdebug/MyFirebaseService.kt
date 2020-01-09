@@ -6,11 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Handler
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -21,18 +19,17 @@ import org.greenrobot.eventbus.EventBus
 
 
 class MyFirebaseService : FirebaseMessagingService() {
-    val handler=Handler()
-val channelid="com.jianzhi.jzcustomdebug"
+    val handler = Handler()
+    val channelid = "com.jianzhi.jzcustomdebug"
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        AddAdvice("發生崩潰","saas",this)
         handler.post {
-            Log.e("type",remoteMessage.from)
-            var data=remoteMessage.data["data"]
-            var type=remoteMessage.data["type"]
-            var time=remoteMessage.data["time"]
-            var dbname=remoteMessage.from.toString().replace("/topics/","")
-            Log.i("MyFirebaseService", "收到"+dbname)
+            Log.e("type", remoteMessage.from)
+            var data = remoteMessage.data["data"]
+            var type = remoteMessage.data["type"]
+            var time = remoteMessage.data["time"]
+            var dbname = remoteMessage.from.toString().replace("/topics/", "")
+            Log.i("MyFirebaseService", "收到" + dbname)
             Log.i("MyFirebaseService", "data " + data)
             Log.i("MyFirebaseService", "type " + type)
             Log.i("MyFirebaseService", "time " + time)
@@ -47,8 +44,9 @@ val channelid="com.jianzhi.jzcustomdebug"
             )
             item.exsql("insert into `$dbname` (type,data,time) values ('${type}','${remoteMessage.data["data"]}','${remoteMessage.data["time"]}')")
             item.close()
-            Log.i("comple","complete")
+            Log.i("comple", "complete")
             EventBus.getDefault().post(MessageEvent())
+            AddAdvice("發生崩潰", type.toString())
         }
 
 
@@ -63,6 +61,7 @@ val channelid="com.jianzhi.jzcustomdebug"
         super.onNewToken(s)
         Log.i("MyFirebaseService", "token " + s!!)
     }
+
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -79,17 +78,26 @@ val channelid="com.jianzhi.jzcustomdebug"
             notificationManager.createNotificationChannel(channel)
         }
     }
-    fun AddAdvice(title:String,content:String,context:Context){
+
+    fun AddAdvice(title: String, content: String) {
         createNotificationChannel()
+        var pi = PendingIntent.getActivity(
+            this,
+            100,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
         var builder = NotificationCompat.Builder(this, channelid)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("My notification")
-            .setContentText("Much longer text that cannot fit one line...")
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText("Much longer text that cannot fit one line..."))
+            .setSmallIcon(R.mipmap.erroricon)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(content)
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
-            .setVibrate()
+            .setContentIntent(pi)
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
             notify(10, builder.build())
